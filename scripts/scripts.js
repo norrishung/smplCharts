@@ -6,7 +6,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		var inputString = $("#datainput").val();
 		var input = parse(inputString);
-		var example = new Smpl.lineChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart", "time", "number");
+		var example = new Smpl.pieChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart");
 	});
 
 	
@@ -15,7 +15,7 @@ $(document).ready(function() {
 		if (event.keyCode == 13) {
 			var inputString = $("#datainput").val();
 			var input = parse(inputString);
-			var example = new Smpl.lineChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart", "time", "number");
+			var example = new Smpl.pieChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart");
 		}
 		
 		if (event.keyCode == 9) {

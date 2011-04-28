@@ -225,7 +225,8 @@ function SmplCharts() {
 		
 		//initial conditions
 		var canvasWidth = 600;
-		var canvasHeight = 400;
+		var canvasHeight = 300;
+		var padding = 10;
 		var fontSize = 12;
 		var font = "Arial";
 		var foregroundColor = "#666666";
@@ -238,27 +239,71 @@ function SmplCharts() {
 			var canvas = $(element)[0];
 			canvas.height = canvasHeight;
 			canvas.width = canvasWidth;
-			var context = canvas.getContext("2d");	
+			var context = canvas.getContext("2d");
 			
 			//data
-			var total = 0;
+			
+			context.font = (fontSize) + " " + font;
+			context.lineWidth = .5;
+			
+			centerX = canvasWidth/2;
+			centerY = canvasHeight/2+fontSize+padding;
+			
+			maxLabelLength = 0;
+			for (item in labels) {
+				textWidth = context.measureText(labels[item] + " (100.00%)").width;
+				if(textWidth > maxLabelLength) {maxLabelLength = textWidth};
+			}
+			maxHorRadius = (canvasWidth - 2*maxLabelLength - 4*padding)/(2*1.5);
+			maxVerRadius = (canvasHeight - padding*2)/(2*1.5);
+			radius = Math.min(maxHorRadius, maxVerRadius);
+
+			total = 0;
 			for(i in data) {total = total+parseFloat(data[i])};
 			norm = 360/total;
 			colorNorm = 170/(data.length-1);
 			
-			centerX = canvasWidth/2;
-			centerY = canvasHeight/2;
 			currentDegrees = 0;
 			
 			for(i in data) {
+				
 				colorNumber = Math.round(200-i*colorNorm);
 				nextDegrees = data[i]*norm + currentDegrees;
 				context.beginPath();
-				context.moveTo(centerX, centerY);
-				context.arc(centerX, centerY, 100, toRadians(currentDegrees), toRadians(nextDegrees), false);
+					context.moveTo(centerX, centerY);
+					context.arc(centerX, centerY, radius, toRadians(currentDegrees), toRadians(nextDegrees), false);
+					context.fillStyle = 'rgb(' + colorNumber + ', ' + colorNumber + ', ' + colorNumber + ')';
+					context.fill();
 				context.closePath();
-				context.fillStyle = 'rgb(' + colorNumber + ', ' + colorNumber + ', ' + colorNumber + ')';
-				context.fill();
+				
+				stemDegrees = currentDegrees + data[i]*norm/2;
+				stemStartX = centerX+radius*Math.cos(toRadians(stemDegrees));
+				stemStartY = centerY+radius*Math.sin(toRadians(stemDegrees));
+				stemEndX = centerX+1.2*radius*Math.cos(toRadians(stemDegrees));
+				stemEndY = centerY+1.2*radius*Math.sin(toRadians(stemDegrees));
+				if(stemEndX < canvasWidth/2) {
+					branchEndX = centerX-radius*1.5;
+					context.textAlign = "right";
+					textPadding = -padding;
+				}
+				else {
+					branchEndX = centerX+radius*1.5;
+					context.textAlign = "left";
+					textPadding = padding;
+				};
+				context.beginPath();
+					context.moveTo(stemStartX, stemStartY);
+					context.lineTo(stemEndX, stemEndY);
+					context.lineTo(branchEndX, stemEndY);
+					context.strokeStyle = foregroundColor;
+					context.stroke();
+				context.closePath();
+				
+				context.fillStyle = foregroundColor;
+				context.textBaseline = "middle";
+				percentage = Math.round((data[i]/total)*10000)/100;
+				context.fillText(labels[i] + " (" + percentage + "%)", branchEndX + textPadding, stemEndY);
+				
 				currentDegrees = nextDegrees;
 			}
 		
