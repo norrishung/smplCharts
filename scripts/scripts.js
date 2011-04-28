@@ -6,7 +6,7 @@ $(document).ready(function() {
 		event.preventDefault();
 		var inputString = $("#datainput").val();
 		var input = parse(inputString);
-		var example = new Smpl.BarChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart");
+		var example = new Smpl.lineChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart", "time", "number");
 	});
 
 	
@@ -15,7 +15,7 @@ $(document).ready(function() {
 		if (event.keyCode == 13) {
 			var inputString = $("#datainput").val();
 			var input = parse(inputString);
-			var example = new Smpl.BarChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart");
+			var example = new Smpl.lineChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart", "time", "number");
 		}
 		
 		if (event.keyCode == 9) {
@@ -39,8 +39,14 @@ $(document).ready(function() {
 
 function parse(inputString) {
 	var input = inputString.split("\n");
-	for (line in input) {
-		input[line] = input[line].split("\t");
+	for (var line=0; line < input.length; line++) {
+		if(input[line].toString().length > 0) {
+			input[line] = input[line].split("\t")
+		}
+		else {
+			input.splice(line, 1);
+			line = line-1;
+		}	
 	}
 	
 	var parsedInput = [new Array(), new Array()];
