@@ -1,19 +1,19 @@
 var Smpl = new SmplCharts();
 function SmplCharts() {
 
-	this.barChart = function(element, data, labels, title, caption){
+	this.barChart = function(element, data, labels, title){
 	
 		//Default initial settings
-		var canvasWidth = 600;
-		var canvasHeight = data.length*30;
+		var canvasWidth = 550;
 		var barToPaddingRatio = .7;
 		var padding = 10;
 		var fontSize = 12;
 		var font = "Arial";
-		var foregroundColor = "#666666";
+		var foregroundColor = "#BC5A2F";
 		var backgroundColor = "#E7E7E7";
-		var textColor = foregroundColor;
+		var textColor = "#666666";
 		var numScaleDivs = 4;
+		var canvasHeight = data.length*30+fontSize+padding*5;
 	
 		this.draw = function() {
 			//Setting up the Canvas
@@ -42,25 +42,25 @@ function SmplCharts() {
 			var graphXStart = maxLabelLength + padding*2;
 			var graphXEnd = canvasWidth - (maxNumberLength + padding*2);
 			var graphWidth = graphXEnd - graphXStart;
-			var graphYStart = fontSize + padding*2;
-			var graphYEnd = canvasHeight - (fontSize + padding*2);
+			var graphYStart = fontSize + padding*4;
+			var graphYEnd = canvasHeight-padding;
 			var graphHeight = graphYEnd - graphYStart;
 		
 			//Setting up the Data
 			barHeight = graphHeight/(data.length)*barToPaddingRatio;
-			barPadding = graphHeight/(data.length-1)*(1-barToPaddingRatio);
+			barPadding = graphHeight/(data.length)*(1-barToPaddingRatio);
 			norm = graphWidth/maxNumber;
 		
 			//Drawing the Background
 			context.fillStyle = backgroundColor;
-			context.fillRect(graphXStart, graphYStart-padding, canvasWidth, graphHeight+padding*2);
+			context.fillRect(graphXStart, graphYStart-padding, canvasWidth, graphHeight+padding*2-barPadding);
 			context.fillStyle = textColor;
 			context.font = "bold " + (fontSize) + " " + font;
-			context.textBaseline = "middle";
-			context.fillText(title.toUpperCase() + " - " + caption, graphXStart, padding);
+			context.fillText(title.toUpperCase(), graphXStart, padding+fontSize);
 
 			//Drawing the Data
 			context.font = (fontSize) + " " + font;
+			context.textBaseline = "middle";
 			context.textAlign = "right";
 			for (var i in data) {
 				context.fillStyle = foregroundColor;
@@ -76,10 +76,33 @@ function SmplCharts() {
 				context.fillText(data[i], graphXStart + data[i]*norm + padding/2, graphYStart + barHeight/2 + i*barHeight + i*barPadding, 40);
 			}			
 		}
+		
+		this.setTitle = function(text) {
+			title = text;
+		}
+		
+		this.getTitle = function() {
+			return title;
+		}
+		
+		this.setWidth = function(width) {
+			canvasWidth = width;
+		}
+		
+		this.getWidth = function() {
+			return canvasWidth;
+		}
+		
+		this.setHeight = function(height) {
+			canvasHeight = height;
+		}
+		
+		this.getHeight = function() {
+			return canvasHeight;
+		}
 	
 		this.setFont = function(fontface) {
 			font = fontface;
-			this.draw();
 		}
 	
 		this.getFont = function() {
@@ -88,16 +111,14 @@ function SmplCharts() {
 	
 		this.setFontSize = function(fontsize) {
 			fontSize = fontsize;
-			this.draw();
 		}
 	
-		this.getFont = function() {
-			return font;
+		this.getFontSize = function() {
+			return fontSize;
 		}
 	
 		this.setColor = function(color) {
 			foregroundColor = color;
-			this.draw();
 		}
 	
 		this.getColor = function() {
@@ -106,7 +127,6 @@ function SmplCharts() {
 	
 		this.setTextColor = function(color) {
 			textColor = color;
-			this.draw();
 		}
 	
 		this.getTextColor = function() {
@@ -115,20 +135,11 @@ function SmplCharts() {
 	
 		this.setBackgroundColor = function(color) {
 			backgroundColor = color;
-			this.draw();
+			
 		}
 	
 		this.getBackgroundColor = function() {
 			return backgroundColor;
-		}
-	
-		this.setScaleDivs = function(num) {
-			numScaleDivs = num + 1;
-			this.draw();
-		}
-
-		this.getScaleDivs = function() {
-			return numScaleDivs
 		}
 	
 		this.draw();
@@ -136,16 +147,16 @@ function SmplCharts() {
 	}
 	
 	
-	this.lineChart = function(element, data, labels, title, caption, xAxis, yAxis) {
+	this.lineChart = function(element, data, labels, title, xAxis, yAxis) {
 		
-		var canvasWidth = 600;
+		var canvasWidth = 550;
 		var canvasHeight = 200;
 		var padding = 10;
 		var fontSize = 12;
 		var font = "Arial";
-		var foregroundColor = "#666666";
+		var foregroundColor = "#BC5A2F";
 		var backgroundColor = "#E7E7E7";
-		var textColor = foregroundColor;
+		var textColor = "#666666";
 		
 		this.draw = function() {
 			
@@ -175,7 +186,7 @@ function SmplCharts() {
 			graphXStart = fontSize + maxNumberLength + padding*3;
 			graphXEnd = canvasWidth - padding;
 			graphWidth = graphXEnd - graphXStart;
-			graphYStart = fontSize + padding*4;
+			graphYStart = fontSize + padding*3;
 			graphYEnd = canvasHeight - (fontSize*2 + padding*3);
 			graphHeight = graphYEnd - graphYStart;
 			
@@ -185,16 +196,16 @@ function SmplCharts() {
 			
 			//background
 			context.fillStyle = backgroundColor;
-			context.fillRect(graphXStart, graphYStart-padding*2, graphWidth, graphHeight+padding*2);
+			context.fillRect(graphXStart, graphYStart, graphWidth, graphHeight);
 			context.fillStyle = textColor;
 			context.font = "bold " + (fontSize) + " " + font;
-			context.textBaseline = "middle";
-			context.fillText(title.toUpperCase() + " - " + caption, graphXStart, padding);
+			context.fillText(title.toUpperCase(), graphXStart, padding+fontSize);
 			
 			
 			//foreground
 			context.font = (fontSize) + " " + font;
 			context.textAlign = "center";
+			context.textBaseline = "middle";
 			context.beginPath();
 			context.moveTo(graphXStart, graphYEnd);
 			for (i in data) {
@@ -203,10 +214,12 @@ function SmplCharts() {
 			}
 			context.lineTo(graphXEnd, graphYEnd);
 			context.closePath();
+			context.fillStyle = foregroundColor;
 			context.fill();
 			
 			context.textAlign = "right";
 			context.textBaseline = "middle";
+			context.fillStyle = textColor;
 			context.fillText("0", graphXStart - padding, graphYEnd);
 			context.fillText(maxNumber, graphXStart - padding, graphYStart);
 			
@@ -217,21 +230,93 @@ function SmplCharts() {
 			context.fillText(yAxis, -(graphYStart + graphHeight/2), fontSize);
 		}
 		
+		this.setTitle = function(text) {
+			title = text;
+			
+		}
+		
+		this.getTitle = function() {
+			return title;
+		}
+		
+		this.setWidth = function(width) {
+			canvasWidth = width;
+			
+		}
+		
+		this.getWidth = function() {
+			return canvasWidth;
+		}
+		
+		this.setHeight = function(height) {
+			canvasHeight = height;
+			
+		}
+		
+		this.getHeight = function() {
+			return canvasHeight;
+		}
+	
+		this.setFont = function(fontface) {
+			font = fontface;
+			
+		}
+	
+		this.getFont = function() {
+			return font;
+		}
+	
+		this.setFontSize = function(fontsize) {
+			fontSize = fontsize;
+			
+		}
+	
+		this.getFontSize = function() {
+			return fontSize;
+		}
+	
+		this.setColor = function(color) {
+			foregroundColor = color;
+			
+		}
+	
+		this.getColor = function() {
+			return foregroundColor;
+		}
+	
+		this.setTextColor = function(color) {
+			textColor = color;
+			
+		}
+	
+		this.getTextColor = function() {
+			return textColor;
+		}
+	
+		this.setBackgroundColor = function(color) {
+			backgroundColor = color;
+			
+		}
+	
+		this.getBackgroundColor = function() {
+			return backgroundColor;
+		}
+		
 		this.draw();
 		
 	}
 
-	this.pieChart = function(element, data, labels, title, caption) {
+	this.pieChart = function(element, data, labels, title) {
 		
 		//initial conditions
-		var canvasWidth = 600;
+		var canvasWidth = 550;
 		var canvasHeight = 300;
 		var padding = 10;
 		var fontSize = 12;
 		var font = "Arial";
-		var foregroundColor = "#666666";
+		var foregroundColor = "#BC5A2F";
 		var backgroundColor = "#E7E7E7";
-		var textColor = foregroundColor;	
+		var textColor = "#666666";	
 		
 		this.draw = function() {
 			
@@ -241,13 +326,18 @@ function SmplCharts() {
 			canvas.width = canvasWidth;
 			var context = canvas.getContext("2d");
 			
-			//data
+			//draw the background
+			context.font = "bold " + (fontSize) + " " + font;
+			context.textAlign = "center";
+			context.fillStyle = textColor;
+			context.fillText(title.toUpperCase(), canvasWidth/2, fontSize+padding);
 			
+			//set up the data
 			context.font = (fontSize) + " " + font;
 			context.lineWidth = .5;
 			
 			centerX = canvasWidth/2;
-			centerY = canvasHeight/2+fontSize+padding;
+			centerY = canvasHeight/2+fontSize;
 			
 			maxLabelLength = 0;
 			for (item in labels) {
@@ -261,21 +351,24 @@ function SmplCharts() {
 			total = 0;
 			for(i in data) {total = total+parseFloat(data[i])};
 			norm = 360/total;
-			colorNorm = 170/(data.length-1);
 			
 			currentDegrees = 0;
+			colorWeight = .8/(data.length-1);
 			
+			//draw the data
 			for(i in data) {
-				
-				colorNumber = Math.round(200-i*colorNorm);
+				//draw the pie slice
 				nextDegrees = data[i]*norm + currentDegrees;
 				context.beginPath();
 					context.moveTo(centerX, centerY);
 					context.arc(centerX, centerY, radius, toRadians(currentDegrees), toRadians(nextDegrees), false);
-					context.fillStyle = 'rgb(' + colorNumber + ', ' + colorNumber + ', ' + colorNumber + ')';
+					context.globalAlpha = .2 + i*colorWeight;
+					context.fillStyle = foregroundColor;
 					context.fill();
+					context.globalAlpha = 1;		
 				context.closePath();
 				
+				//draw label lines and text
 				stemDegrees = currentDegrees + data[i]*norm/2;
 				stemStartX = centerX+radius*Math.cos(toRadians(stemDegrees));
 				stemStartY = centerY+radius*Math.sin(toRadians(stemDegrees));
@@ -291,15 +384,15 @@ function SmplCharts() {
 					context.textAlign = "left";
 					textPadding = padding;
 				};
+				context.fillStyle = textColor;
+				context.strokeStyle = textColor;
 				context.beginPath();
 					context.moveTo(stemStartX, stemStartY);
 					context.lineTo(stemEndX, stemEndY);
 					context.lineTo(branchEndX, stemEndY);
-					context.strokeStyle = foregroundColor;
 					context.stroke();
 				context.closePath();
 				
-				context.fillStyle = foregroundColor;
 				context.textBaseline = "middle";
 				percentage = Math.round((data[i]/total)*10000)/100;
 				context.fillText(labels[i] + " (" + percentage + "%)", branchEndX + textPadding, stemEndY);
@@ -312,6 +405,79 @@ function SmplCharts() {
 		function toRadians(number) {
 			return number*(Math.PI/180);	
 		}
+		
+		this.setTitle = function(text) {
+			title = text;
+			
+		}
+		
+		this.getTitle = function() {
+			return title;
+		}
+		
+		this.setWidth = function(width) {
+			canvasWidth = width;
+			
+		}
+		
+		this.getWidth = function() {
+			return canvasWidth;
+		}
+		
+		this.setHeight = function(height) {
+			canvasHeight = height;
+			
+		}
+		
+		this.getHeight = function() {
+			return canvasHeight;
+		}
+	
+		this.setFont = function(fontface) {
+			font = fontface;
+			
+		}
+	
+		this.getFont = function() {
+			return font;
+		}
+	
+		this.setFontSize = function(fontsize) {
+			fontSize = fontsize;
+			
+		}
+	
+		this.getFontSize = function() {
+			return fontSize;
+		}
+	
+		this.setColor = function(color) {
+			foregroundColor = color;
+			
+		}
+	
+		this.getColor = function() {
+			return foregroundColor;
+		}
+	
+		this.setTextColor = function(color) {
+			textColor = color;
+			
+		}
+	
+		this.getTextColor = function() {
+			return textColor;
+		}
+	
+		this.setBackgroundColor = function(color) {
+			backgroundColor = color;
+			
+		}
+	
+		this.getBackgroundColor = function() {
+			return backgroundColor;
+		}
+
 		
 		this.draw();
 	}

@@ -1,21 +1,100 @@
 var literalTabbing = false;
+var optionsShown = false;
+var currentChartType = "#horizbar";
+var previewChart;
 
 $(document).ready(function() {
 	
-	$("#data").submit(function(event){
-		event.preventDefault();
-		var inputString = $("#datainput").val();
-		var input = parse(inputString);
-		var example = new Smpl.pieChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart");
-	});
-
+	var databoxDefaultString = "1500's\t458\n1600's\t580\n1700's\t791\n1800's\t978\n1900's\t1650\n2000's\t5978";
+	var titleboxDefaultString = "World Population (in millions)";
 	
-	$("#datainput").live('keydown', function(event) {
-
-		if (event.keyCode == 13) {
-			var inputString = $("#datainput").val();
+	$("#titlebox").val(titleboxDefaultString).css('color', '#AAAAAA');
+	$("#databox").html(databoxDefaultString).css('color', '#AAAAAA');
+	
+	var inputString = $("#databox").attr("value");
+	var input = parse(inputString);
+	var previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
+	
+	//Picking the Chart Type
+	$(".chartbutton").click(function(event) {
+		event.preventDefault();
+		$(".chartbutton").removeClass("button-selected");
+		$(this).addClass("button-selected");
+		currentChartType = $(this).attr("href");
+			$("#thechart").fadeOut(100, function() {
+			var inputString = $("#databox").attr("value");
 			var input = parse(inputString);
-			var example = new Smpl.pieChart("#chart1", input[0], input[1], "Chart Title", "An Example Chart");
+			previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
+			useOptions(previewChart);
+			$("#thechart").fadeIn(100);
+		});
+	});
+	
+	//Advanced Options
+	
+	$("#advanced").click(function(event) {
+		event.preventDefault();
+		if(optionsShown == false) {
+			$("#advanced").html("Hide advanced options");
+			$("#options").slideDown(100);
+			optionsShown = true;
+		}
+		else {
+			$("#advanced").html("Show advanced options");
+			$("#options").slideUp(100);
+			optionsShown = false;
+		}
+	});
+	
+	$("#options").submit(function(event) {
+		event.preventDefault();
+		useOptions(previewChart);
+		previewChart.draw();
+	});
+	
+	$("#optionsdefault").click(function(event) {
+		event.preventDefault();
+		var inputString = $("#databox").attr("value");
+		var input = parse(inputString);
+		previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
+		$("#chartwidth").val(previewChart.getWidth());
+		$("#chartheight").val("");
+		$("#textsize").val(previewChart.getFontSize());
+		$("#fontface").val(previewChart.getFont());
+	});	
+	
+	//Filling Out the Title
+	$("#titlebox").focus(function() {
+		if($("#titlebox").val() == "" || $("#titlebox").val() == titleboxDefaultString) {$("#titlebox").val("").css('color', '#333333')};
+	});
+	
+	$("#titlebox").blur(function() {
+		if($("#titlebox").val() == "" || $("#titlebox").val() == titleboxDefaultString) {
+			$("#titlebox").val(titleboxDefaultString).css('color', '#AAAAAA');
+		}
+		else {
+			previewChart.setTitle($("#titlebox").val());
+			previewChart.draw();
+		}
+	});
+	
+	//Filling Out the Data
+	$("#databox").focus(function() {
+		if($("#databox").html() == "" || $("#databox").html() == databoxDefaultString) {$("#databox").html("").css('color', '#333333')};
+	});
+	
+	$("#databox").blur(function() {
+		if($("#databox").attr('value') == "") {
+			$("#databox").html(databoxDefaultString).css('color', '#AAAAAA');
+		}
+	});
+	
+	$("#databox").live('keydown', function(event) {
+		if (event.keyCode == 13) {
+			var inputString = $("#databox").val();
+			var input = parse(inputString);
+			previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
+			useOptions(previewChart);
 		}
 		
 		if (event.keyCode == 9) {
@@ -31,6 +110,14 @@ $(document).ready(function() {
 
 	       event.preventDefault();
 		}
+		
+		$("#data").submit(function(event){
+			event.preventDefault();
+			var inputString = $("#databox").val();
+			var input = parse(inputString);
+			previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
+			useOptions(previewChart);
+		});
 		
 	});
 
@@ -50,8 +137,37 @@ function parse(inputString) {
 	}
 	
 	var parsedInput = [new Array(), new Array()];
-	for (item in input) {parsedInput[0][item] = input[item][1];};
-	for (item in input) {parsedInput[1][item] = input[item][0];};
+	for (item in input) {
+		parsedInput[0][item] = input[item][0];
+		parsedInput[1][item] = input[item][1];
+	};
 
 	return parsedInput;
 };
+
+function makeChart(data, labels, title, xAxis, yAxis) {
+	if(!data) {data = [100, 150, 120]};
+	if(!labels) {labels = ["Label 1", "Label 2", "Label 3"]};
+	if(!xAxis) {xAxis = "X Axis"};
+	if(!yAxis) {yAxis = "Y Axis"};
+	
+	if(currentChartType == "#horizbar") {
+		return new Smpl.barChart("#thechart", data, labels, title);
+	}
+	
+	if(currentChartType == "#solidline") {
+		return new Smpl.lineChart("#thechart", data, labels, title, xAxis, yAxis);
+	}
+	
+	if(currentChartType == "#pie") {
+		return new Smpl.pieChart("#thechart", data, labels, title);
+	}
+};
+
+function useOptions(chart) {
+	if($("#chartwidth").val() != "") {chart.setWidth($("#chartwidth").val());};
+	if($("#chartheight").val() != "") {chart.setHeight($("#chartheight").val())};
+	if($("#textsize").val() != "") {chart.setFontSize(parseFloat($("#textsize").val()))};
+	chart.setFont($("#fontface").val());
+	chart.draw();
+}

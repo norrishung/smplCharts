@@ -8,16 +8,65 @@
     <script type="text/javascript" src="scripts/scripts.js" charset="utf-8"></script>
   </head>
   <body>
-    <h1>SMPLCHARTS</h1>
-    <p>Simple Pretty Charts for Dumb Ugly People</p>
-    <div id="content">
-      Paste from Excel: <br />
-      <form id="data">
-        <textarea id="datainput"></textarea><br />
-        <input type="submit" value="generate"/>
-      </form>
-      <canvas id="chart1"></canvas>
-      <canvas id="chart2"></canvas>
-    <div>
+    <div id="page">
+      <div id="header" class="row width-full border-none">
+        <div id="logo"><h1>SMPLCHARTS</h1></div>
+        <p id="tagline">Simple Pretty Charts for Dumb Ugly People</p>
+      </div>
+      <div id="charttype" class="row width-full">
+        <h2>1. Pick a CHART TYPE</h2>
+        <ul>
+          <li><a href="#horizbar" class="chartbutton button-selected">Horizontal Bar Chart</a></li>
+          <li><a href="#solidline" class="chartbutton">Solid Line Chart</a></li>
+          <li><a href="#pie" class="chartbutton">Pie Chart</a></li>
+        </ul>
+        <br class="nofloat"/><br />
+        <a href="#advanced" id="advanced">Show advanced options</a>
+        <form id="options">
+          <ul>
+            <li>
+              <label for="chartwidth">Width: </label>
+              <input type="text" id="chartwidth" class="textbox" value="550" />
+              <label for="chartheight">Height: </label>
+              <input type="text" id="chartheight" class="textbox" value="" />
+            </li>
+            <li>
+              <label for="textsize">Text Size: </label>
+              <input type="text" id="textsize" class="textbox" value="12" />
+              <select id="fontface">
+                <option>Arial</option>
+                <option>Courier</option>
+                <option>Georgia</option>
+                <option>Helvetica</option>
+                <option>Times New Roman</option>
+                <option>Verdana</option>
+              </select>
+            </li>
+            <li class="border-none">
+              <input type="submit" id="optionsapply" class="submitbutton float" value="Apply" />
+              <input type="button" id="optionsdefault" class="submitbutton float" value="Use Defaults" />
+            </li>
+          <ul>
+        </form>
+        <br class="nofloat"/>
+      </div>
+      <div id="data" class="row width-320 margin-80 float">
+        <h2 class="float">2. Enter DATA</h2>
+        <form id="data">
+          <input type="text" id="titlebox" class="textbox" value="">
+          <br /><br />
+          <p><em>Type or paste from spreadsheet. If typing, use tabs between columns.</em></p>
+          <textarea id="databox" class="textbox"></textarea>
+          <input type="submit" class="submitbutton" value="Show Preview"/>
+        </form>
+      </div>
+      <div id="chartpreview" class="row width-560 float">
+        <h2>3. See CHART!</h2>
+        <canvas id="thechart"></canvas>
+      </div>
+      <div id="footer" class="row width-full">
+        <a href="http://www.dualaesthetic.com/">&copy; 2011 Norris Hung</a>
+      </div>
+    </div>
   </body>
 </html>
