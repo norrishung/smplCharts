@@ -72,7 +72,12 @@ $(document).ready(function() {
 		if($("#titlebox").val() == "" || $("#titlebox").val() == titleboxDefaultString) {
 			$("#titlebox").val(titleboxDefaultString).css('color', '#AAAAAA');
 		}
-		else {
+		previewChart.setTitle($("#titlebox").val());
+		previewChart.draw();
+	});
+	
+	$("#titlebox").live('keyup', function(event) {
+		if (true) {
 			previewChart.setTitle($("#titlebox").val());
 			previewChart.draw();
 		}
@@ -87,16 +92,20 @@ $(document).ready(function() {
 		if($("#databox").attr('value') == "") {
 			$("#databox").html(databoxDefaultString).css('color', '#AAAAAA');
 		}
+		var inputString = $("#databox").val();
+		var input = parse(inputString);
+		previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
+		useOptions(previewChart);
 	});
 	
-	$("#databox").live('keydown', function(event) {
-		if (event.keyCode == 13) {
-			var inputString = $("#databox").val();
-			var input = parse(inputString);
-			previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
-			useOptions(previewChart);
-		}
-		
+	$("#databox").live('keyup', function(event) {
+		var inputString = $("#databox").val();
+		var input = parse(inputString);
+		previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
+		useOptions(previewChart);
+	});
+	
+	$("#databox").live('keydown', function(event) {	
 		if (event.keyCode == 9) {
 	       var myValue = "\t";
 	       var startPos = this.selectionStart;
@@ -139,7 +148,12 @@ function parse(inputString) {
 	var parsedInput = [new Array(), new Array()];
 	for (item in input) {
 		parsedInput[0][item] = input[item][0];
-		parsedInput[1][item] = input[item][1];
+		if(!isNaN(input[item][1]) && input[item][1].length > 0) {
+			parsedInput[1][item] = input[item][1];
+		}
+		else {
+			parsedInput[1][item] = "0";
+		}
 	};
 
 	return parsedInput;

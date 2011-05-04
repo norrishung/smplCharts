@@ -37,10 +37,11 @@ function SmplCharts() {
 			}
 			
 			maxNumber = Math.max.apply(Math, data);
+			minNumber = Math.min(0, Math.min.apply(Math, data));
 			
 			//Setting up the Background
 			var graphXStart = maxLabelLength + padding*2;
-			var graphXEnd = canvasWidth - (maxNumberLength + padding*2);
+			var graphXEnd = canvasWidth;
 			var graphWidth = graphXEnd - graphXStart;
 			var graphYStart = fontSize + padding*4;
 			var graphYEnd = canvasHeight-padding;
@@ -49,7 +50,12 @@ function SmplCharts() {
 			//Setting up the Data
 			barHeight = graphHeight/(data.length)*barToPaddingRatio;
 			barPadding = graphHeight/(data.length)*(1-barToPaddingRatio);
-			norm = graphWidth/maxNumber;
+			if(minNumber < 0) {
+				norm = (graphWidth - (maxNumberLength*2 + padding*4))/(maxNumber-minNumber)
+			}
+			else {
+				norm = (graphWidth - (maxNumberLength + padding*2))/(maxNumber)
+			}
 		
 			//Drawing the Background
 			context.fillStyle = backgroundColor;
@@ -64,7 +70,12 @@ function SmplCharts() {
 			context.textAlign = "right";
 			for (var i in data) {
 				context.fillStyle = foregroundColor;
-				context.fillRect(graphXStart, graphYStart + i*barHeight + i*barPadding, data[i]*norm, barHeight);
+				if(minNumber < 0) {
+					context.fillRect(graphXStart+padding*1.5+maxNumberLength-minNumber*norm, graphYStart + i*barHeight + i*barPadding, (data[i])*norm, barHeight);
+				}
+				else {
+					context.fillRect(graphXStart, graphYStart + i*barHeight + i*barPadding, data[i]*norm, barHeight);
+				}
 				context.fillStyle = textColor;
 				context.fillText(labels[i], graphXStart - padding, graphYStart + barHeight/2 + i*barHeight + i*barPadding);
 			}
@@ -72,8 +83,18 @@ function SmplCharts() {
 			context.font = fontSize + " " + font;
 		
 			for (var i in data) {
-				context.textAlign = "left";
-				context.fillText(data[i], graphXStart + data[i]*norm + padding/2, graphYStart + barHeight/2 + i*barHeight + i*barPadding, 40);
+				if(data[i] < 0 && minNumber < 0) {
+					context.textAlign = "right";
+					context.fillText(data[i], graphXStart + padding + maxNumberLength + data[i]*norm - minNumber*norm, graphYStart + barHeight/2 + i*barHeight + i*barPadding, 40);
+				}
+				else if(data[i] >= 0 && minNumber < 0){
+					context.textAlign = "left";
+					context.fillText(data[i], graphXStart + data[i]*norm + maxNumberLength + padding*2 - minNumber*norm, graphYStart + barHeight/2 + i*barHeight + i*barPadding, 40);
+				}
+				else {
+					context.textAlign = "left";
+					context.fillText(data[i], graphXStart + data[i]*norm + padding/2, graphYStart + barHeight/2 + i*barHeight + i*barPadding, 40);
+				}
 			}			
 		}
 		
@@ -181,10 +202,11 @@ function SmplCharts() {
 			}
 			
 			maxNumber = Math.max.apply(Math, data);
+			minNumber = Math.min(0, Math.min.apply(Math, data));
 			
 			//setting up the background
 			graphXStart = fontSize + maxNumberLength + padding*3;
-			graphXEnd = canvasWidth - padding;
+			graphXEnd = canvasWidth - padding - maxLabelLength/2;
 			graphWidth = graphXEnd - graphXStart;
 			graphYStart = fontSize + padding*3;
 			graphYEnd = canvasHeight - (fontSize*2 + padding*3);
@@ -192,7 +214,7 @@ function SmplCharts() {
 			
 			//setting up the data
 			dataspacing = graphWidth/(data.length-1);
-			norm = graphHeight/maxNumber;
+			norm = graphHeight/(maxNumber-minNumber);
 			
 			//background
 			context.fillStyle = backgroundColor;
@@ -207,20 +229,33 @@ function SmplCharts() {
 			context.textAlign = "center";
 			context.textBaseline = "middle";
 			context.beginPath();
-			context.moveTo(graphXStart, graphYEnd);
+			context.moveTo(graphXStart, graphYEnd+minNumber*norm);
 			for (i in data) {
-				context.lineTo(graphXStart + dataspacing*i, graphYEnd - data[i]*norm)
+				context.lineTo(graphXStart + dataspacing*i, graphYEnd - (data[i]-minNumber)*norm);
 				context.fillText(labels[i], graphXStart + dataspacing*i, graphYEnd + padding*2);
 			}
-			context.lineTo(graphXEnd, graphYEnd);
-			context.closePath();
+			context.lineTo(graphXEnd, graphYEnd+minNumber*norm);
 			context.fillStyle = foregroundColor;
 			context.fill();
+			context.closePath();
 			
+			context.beginPath();
+			for (i in data) {
+				context.moveTo(graphXStart + dataspacing*i + 0.5, graphYEnd);
+				context.lineTo(graphXStart + dataspacing*i, graphYEnd + padding/2);
+			}
+			context.closePath();
+			context.strokeStyle = textColor;
+			context.lineWidth = 1;
+			context.stroke();
+
 			context.textAlign = "right";
 			context.textBaseline = "middle";
 			context.fillStyle = textColor;
-			context.fillText("0", graphXStart - padding, graphYEnd);
+			context.fillText(minNumber, graphXStart - padding, graphYEnd);
+			if(minNumber < 0) {
+				context.fillText("0", graphXStart - padding, graphYEnd+minNumber*norm);
+			}
 			context.fillText(maxNumber, graphXStart - padding, graphYStart);
 			
 			context.textAlign = "center";
