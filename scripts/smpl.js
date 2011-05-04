@@ -163,7 +163,9 @@ function SmplCharts() {
 			return backgroundColor;
 		}
 	
+
 		this.draw();
+		
 	
 	}
 	
@@ -241,27 +243,38 @@ function SmplCharts() {
 			context.beginPath();
 			for (i in data) {
 				context.moveTo(graphXStart + dataspacing*i + 0.5, graphYEnd);
-				context.lineTo(graphXStart + dataspacing*i, graphYEnd + padding/2);
+				context.lineTo(graphXStart + dataspacing*i + 0.5, graphYEnd + padding/2);
 			}
 			context.closePath();
 			context.strokeStyle = textColor;
-			context.lineWidth = 1;
+			context.lineWidth = .5;
 			context.stroke();
 
 			context.textAlign = "right";
 			context.textBaseline = "middle";
 			context.fillStyle = textColor;
+			context.beginPath();
 			context.fillText(minNumber, graphXStart - padding, graphYEnd);
+			context.moveTo(graphXStart - padding/2, graphYEnd+.5);
+			context.lineTo(graphXStart, graphYEnd+.5);
 			if(minNumber < 0) {
 				context.fillText("0", graphXStart - padding, graphYEnd+minNumber*norm);
+				context.moveTo(graphXStart - padding/2, graphYEnd+.5);
+				context.lineTo(graphXStart, graphYEnd+.5);
 			}
 			context.fillText(maxNumber, graphXStart - padding, graphYStart);
+			context.moveTo(graphXStart - padding/2, graphYStart+.5);
+			context.lineTo(graphXStart, graphYStart+.5);
+			context.closePath();
+			context.stroke();
+			
 			
 			context.textAlign = "center";
 			context.fillText(xAxis, graphXStart + graphWidth/2, canvasHeight - fontSize);
 			
 			context.rotate(-90*Math.PI/180);
 			context.fillText(yAxis, -(graphYStart + graphHeight/2), fontSize);
+			
 		}
 		
 		this.setTitle = function(text) {
@@ -525,14 +538,14 @@ function SmplCharts() {
 		var foregroundColor = "#BC5A2F";
 		var backgroundColor = "#E7E7E7";
 		var textColor = "#666666";
-		var squareSize = 1;
+		var squareSize = 2;
 		var squarePadding = 1;
 		var canvasRowMax = 3;
-		var unitRowMax = Math.round(((canvasWidth-(canvasRowMax*padding*3))/canvasRowMax)/(squareSize+squarePadding));
-		console.log(unitRowMax);
-		var canvasHeight = 6000;
+		var canvasHeight = 500;
 		
 		this.draw = function() {
+			
+			var unitRowMax = Math.round(((canvasWidth-((canvasRowMax-1)*padding*3))/canvasRowMax)/(squareSize+squarePadding));
 			
 			//setting up the canvas
 			var canvas = $(element)[0];
@@ -544,37 +557,37 @@ function SmplCharts() {
 			context.font = "bold " + (fontSize) + " " + font;
 			context.fillText(title.toUpperCase(), 0, padding+fontSize);
 			
-			currentYStart = fontSize + padding*5;
-			currentXStart = 0;
-			yMax = currentYStart;
+			currElementY = fontSize + padding*5;
+			currElementX = 0;
+			yMax = currElementY;
 			
 			for(i in data) {
 				totalNumber = data[i];
 				currentNumber = 0;
 				context.fillStyle = textColor;
 				context.font = (fontSize) + " " + font;
-				context.fillText(labels[i], currentXStart, currentYStart);
-				currentY = currentYStart+fontSize;
-				currentX = currentXStart;
+				context.fillText(labels[i], currElementX, currElementY);
+				currentY = currElementY+fontSize;
+				currentX = currElementX;
 				context.fillStyle = foregroundColor;
 				while(currentNumber < totalNumber) {
 					context.fillRect(currentX, currentY, squareSize, squareSize);
-					if(currentX + 4 < currentXStart + (squareSize+squarePadding)*unitRowMax) {
+					if(currentX + 4 < currElementX + (squareSize+squarePadding)*unitRowMax) {
 						currentX = currentX + squareSize+squarePadding;
 					}
 					else {
 						currentY = currentY + squareSize + squarePadding;
-						currentX = currentXStart;
+						currentX = currElementX;
 					}
 					currentNumber++;
 				}
 				if(currentY > yMax) {yMax = currentY};
 				if(i%canvasRowMax == canvasRowMax-1) {
-					currentYStart = yMax + padding*4;
-					currentXStart = 0;
+					currElementY = yMax + padding*4;
+					currElementX = 0;
 				}
 				else {
-					currentXStart = currentXStart + unitRowMax*(squareSize+squarePadding) + padding*3;
+					currElementX = currElementX + unitRowMax*(squareSize+squarePadding) + padding*3;
 				}
 			}
 		}
@@ -653,4 +666,134 @@ function SmplCharts() {
 		
 		this.draw();
 	}
+
+	this.bubbleChart = function(element, data, labels, title) {
+		
+		var canvasWidth = 550;
+		var padding = 10;
+		var fontSize = 12;
+		var font = "Arial";
+		var foregroundColor = "#BC5A2F";
+		var backgroundColor = "#E7E7E7";
+		var textColor = "#666666";
+		var canvasRowMax = 4;
+		var canvasHeight = 500;
+		
+		this.draw = function() {
+			
+			var radiusMax = (canvasWidth-(canvasRowMax-1)*padding)/(canvasRowMax*2);
+			var maxNumber = Math.max.apply(Math, data);
+			
+			//setting up the canvas
+			var canvas = $(element)[0];
+			canvas.height = canvasHeight;
+			canvas.width = canvasWidth;
+			var context = canvas.getContext("2d");
+			
+			//title
+			context.fillStyle = textColor;
+			context.font = "bold " + (fontSize) + " " + font;
+			context.fillText(title.toUpperCase(), 0, padding+fontSize);
+			
+			//data
+			currentY = fontSize*2 + padding*3;
+			currentX = radiusMax;
+			norm = radiusMax/Math.sqrt(maxNumber/Math.PI);
+			
+			for(i in data) {
+				radius = Math.sqrt(data[i]/Math.PI)*norm;
+				context.fillStyle = foregroundColor;
+				context.beginPath();
+				context.arc(currentX, currentY+radiusMax+fontSize, radius, 0, 2*Math.PI, true);
+				context.closePath();
+				context.fill();
+				context.fillStyle = textColor;
+				context.textAlign = "center";
+				context.font = (fontSize) + " " + font;
+				context.fillText(labels[i], currentX, currentY);
+				if(i%canvasRowMax == canvasRowMax-1) {
+					currentY = currentY + radiusMax*3;
+					currentX = radiusMax;
+				}
+				else {
+					currentX = currentX + radiusMax*2 + padding;
+				}
+			}
+		}
+
+		this.setTitle = function(text) {
+			title = text;
+			
+		}
+		
+		this.getTitle = function() {
+			return title;
+		}
+		
+		this.setWidth = function(width) {
+			canvasWidth = width;
+			
+		}
+		
+		this.getWidth = function() {
+			return canvasWidth;
+		}
+		
+		this.setHeight = function(height) {
+			canvasHeight = height;
+			
+		}
+		
+		this.getHeight = function() {
+			return canvasHeight;
+		}
+	
+		this.setFont = function(fontface) {
+			font = fontface;
+			
+		}
+	
+		this.getFont = function() {
+			return font;
+		}
+	
+		this.setFontSize = function(fontsize) {
+			fontSize = fontsize;
+			
+		}
+	
+		this.getFontSize = function() {
+			return fontSize;
+		}
+	
+		this.setColor = function(color) {
+			foregroundColor = color;
+			
+		}
+	
+		this.getColor = function() {
+			return foregroundColor;
+		}
+	
+		this.setTextColor = function(color) {
+			textColor = color;
+			
+		}
+	
+		this.getTextColor = function() {
+			return textColor;
+		}
+	
+		this.setBackgroundColor = function(color) {
+			backgroundColor = color;
+			
+		}
+	
+		this.getBackgroundColor = function() {
+			return backgroundColor;
+		}
+		
+		this.draw();
+	}
+
 }

@@ -153,7 +153,7 @@ p.subtext {
 	clear:both;
 }
 
-#charttype ul li a {
+.chartbutton {
 	display:block;
 	height: 30px;
 	width: 150px;
@@ -171,16 +171,16 @@ p.subtext {
 	vertical-align:middle;
 }
 
-#charttype ul li a:hover {
+.chartbutton:hover {
 	background-color:#CCCCCC;
 }
 
-#charttype ul li a.button-selected {
+.chartbutton.button-selected {
 	background-color:#BC5A2F;
 	color:#FFFFFF;
 }
 
-#charttype ul li a:active {
+.chartbutton:active {
 	background-color:#F2BFBB;
 	color:#333333;
 }
@@ -213,8 +213,22 @@ p.subtext {
 	margin-right:10px;
 }
 
-#chartwidth, #chartheight, #textsize {
+#chartwidth, #chartheight {
 	width:70px;
+}
+
+#textlarger {
+	font-size:16px;
+	padding:0px	10px;
+}
+
+#textsmaller {
+	font-size:10px;
+	padding:0px 10px;
+}
+
+#textlarger, #textsmaller, #fontface {
+	margin-top:12px;
 }
 
 #optionsapply, #optionsdefault {

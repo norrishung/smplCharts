@@ -20,21 +20,23 @@
           <li><a href="#solidline" class="chartbutton">Solid Line Chart</a></li>
           <li><a href="#pie" class="chartbutton">Pie Chart</a></li>
           <li><a href="#unit" class="chartbutton">Unit Chart</a></li>
+          <li><a href="#bubble" class="chartbutton">Bubble Chart</a></li>
         </ul>
         <br class="nofloat"/><br />
         <a href="#advanced" id="advanced">Show advanced options</a>
         <form id="options">
           <ul>
             <li>
-              <label for="chartwidth">Width: </label>
-              <input type="text" id="chartwidth" class="textbox" value="550" />
+              <label for="chartwidth" class="optionfield">Width: </label>
+              <input type="text" id="chartwidth" class="textbox optionfield" value="550" />
               <label for="chartheight">Height: </label>
-              <input type="text" id="chartheight" class="textbox" value="" />
+              <input type="text" id="chartheight" class="textbox optionfield" value="" />
             </li>
             <li>
-              <label for="textsize">Text Size: </label>
-              <input type="text" id="textsize" class="textbox" value="12" />
-              <select id="fontface">
+              <a href="#textlarger" id="textlarger">A</a>
+              <a href="#textsmaller" id="textsmaller">A</a>
+              <input type="hidden" id="textsize" class="textbox optionfield" value="12" />
+              <select id="fontface" class="optionfield">
                 <option>Arial</option>
                 <option>Courier</option>
                 <option>Georgia</option>
@@ -44,8 +46,7 @@
               </select>
             </li>
             <li class="border-none">
-              <input type="submit" id="optionsapply" class="submitbutton float" value="Apply" />
-              <input type="button" id="optionsdefault" class="submitbutton float" value="Use Defaults" />
+              <input type="button" id="optionsdefault" class="submitbutton float" value="Reset" />
             </li>
           <ul>
         </form>
@@ -58,7 +59,6 @@
           <br /><br />
           <p><em>Type or paste from spreadsheet. If typing, use tabs between columns.</em></p>
           <textarea id="databox" class="textbox"></textarea>
-          <input type="submit" class="submitbutton" value="Show Preview"/>
         </form>
       </div>
       <div id="chartpreview" class="row width-560 float">

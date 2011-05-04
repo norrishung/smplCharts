@@ -46,12 +46,6 @@ $(document).ready(function() {
 		}
 	});
 	
-	$("#options").submit(function(event) {
-		event.preventDefault();
-		useOptions(previewChart);
-		previewChart.draw();
-	});
-	
 	$("#optionsdefault").click(function(event) {
 		event.preventDefault();
 		var inputString = $("#databox").attr("value");
@@ -61,7 +55,30 @@ $(document).ready(function() {
 		$("#chartheight").val("");
 		$("#textsize").val(previewChart.getFontSize());
 		$("#fontface").val(previewChart.getFont());
-	});	
+		useOptions(previewChart);
+	});
+	
+	$("#textlarger").click(function(event) {
+		event.preventDefault();
+		$("#textsize").val(previewChart.getFontSize()+1);
+		useOptions(previewChart);
+	});
+	
+	$("#textsmaller").click(function(event) {
+		event.preventDefault();
+		$("#textsize").val(previewChart.getFontSize()-1);
+		useOptions(previewChart);
+	});
+	
+	$(".optionfield").change(function(event) {
+		event.preventDefault();
+		useOptions(previewChart);
+	});
+	
+	$(".textbox").live('keyup', function(event) {
+		event.preventDefault();
+		useOptions(previewChart);
+	});
 	
 	//Filling Out the Title
 	$("#titlebox").focus(function() {
@@ -77,10 +94,8 @@ $(document).ready(function() {
 	});
 	
 	$("#titlebox").live('keyup', function(event) {
-		if (true) {
-			previewChart.setTitle($("#titlebox").val());
-			previewChart.draw();
-		}
+		previewChart.setTitle($("#titlebox").val());
+		previewChart.draw();
 	});
 	
 	//Filling Out the Data
@@ -119,14 +134,6 @@ $(document).ready(function() {
 
 	       event.preventDefault();
 		}
-		
-		$("#data").submit(function(event){
-			event.preventDefault();
-			var inputString = $("#databox").val();
-			var input = parse(inputString);
-			previewChart = makeChart(input[1], input[0], $("#titlebox").attr("value"));
-			useOptions(previewChart);
-		});
 		
 	});
 
@@ -179,6 +186,9 @@ function makeChart(data, labels, title, xAxis, yAxis) {
 	
 	if(currentChartType == "#unit") {
 		return new Smpl.unitChart("#thechart", data, labels, title);
+	}
+	if(currentChartType == "#bubble") {
+		return new Smpl.bubbleChart("#thechart", data, labels, title);
 	}
 };
 
