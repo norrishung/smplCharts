@@ -167,7 +167,6 @@ function SmplCharts() {
 	
 	}
 	
-	
 	this.lineChart = function(element, data, labels, title, xAxis, yAxis) {
 		
 		var canvasWidth = 550;
@@ -517,4 +516,141 @@ function SmplCharts() {
 		this.draw();
 	}
 
+	this.unitChart = function(element, data, labels, title) {
+		
+		var canvasWidth = 550;
+		var padding = 10;
+		var fontSize = 12;
+		var font = "Arial";
+		var foregroundColor = "#BC5A2F";
+		var backgroundColor = "#E7E7E7";
+		var textColor = "#666666";
+		var squareSize = 1;
+		var squarePadding = 1;
+		var canvasRowMax = 3;
+		var unitRowMax = Math.round(((canvasWidth-(canvasRowMax*padding*3))/canvasRowMax)/(squareSize+squarePadding));
+		console.log(unitRowMax);
+		var canvasHeight = 6000;
+		
+		this.draw = function() {
+			
+			//setting up the canvas
+			var canvas = $(element)[0];
+			canvas.height = canvasHeight;
+			canvas.width = canvasWidth;
+			var context = canvas.getContext("2d");
+			
+			context.fillStyle = textColor;
+			context.font = "bold " + (fontSize) + " " + font;
+			context.fillText(title.toUpperCase(), 0, padding+fontSize);
+			
+			currentYStart = fontSize + padding*5;
+			currentXStart = 0;
+			yMax = currentYStart;
+			
+			for(i in data) {
+				totalNumber = data[i];
+				currentNumber = 0;
+				context.fillStyle = textColor;
+				context.font = (fontSize) + " " + font;
+				context.fillText(labels[i], currentXStart, currentYStart);
+				currentY = currentYStart+fontSize;
+				currentX = currentXStart;
+				context.fillStyle = foregroundColor;
+				while(currentNumber < totalNumber) {
+					context.fillRect(currentX, currentY, squareSize, squareSize);
+					if(currentX + 4 < currentXStart + (squareSize+squarePadding)*unitRowMax) {
+						currentX = currentX + squareSize+squarePadding;
+					}
+					else {
+						currentY = currentY + squareSize + squarePadding;
+						currentX = currentXStart;
+					}
+					currentNumber++;
+				}
+				if(currentY > yMax) {yMax = currentY};
+				if(i%canvasRowMax == canvasRowMax-1) {
+					currentYStart = yMax + padding*4;
+					currentXStart = 0;
+				}
+				else {
+					currentXStart = currentXStart + unitRowMax*(squareSize+squarePadding) + padding*3;
+				}
+			}
+		}
+
+		this.setTitle = function(text) {
+			title = text;
+			
+		}
+		
+		this.getTitle = function() {
+			return title;
+		}
+		
+		this.setWidth = function(width) {
+			canvasWidth = width;
+			
+		}
+		
+		this.getWidth = function() {
+			return canvasWidth;
+		}
+		
+		this.setHeight = function(height) {
+			canvasHeight = height;
+			
+		}
+		
+		this.getHeight = function() {
+			return canvasHeight;
+		}
+	
+		this.setFont = function(fontface) {
+			font = fontface;
+			
+		}
+	
+		this.getFont = function() {
+			return font;
+		}
+	
+		this.setFontSize = function(fontsize) {
+			fontSize = fontsize;
+			
+		}
+	
+		this.getFontSize = function() {
+			return fontSize;
+		}
+	
+		this.setColor = function(color) {
+			foregroundColor = color;
+			
+		}
+	
+		this.getColor = function() {
+			return foregroundColor;
+		}
+	
+		this.setTextColor = function(color) {
+			textColor = color;
+			
+		}
+	
+		this.getTextColor = function() {
+			return textColor;
+		}
+	
+		this.setBackgroundColor = function(color) {
+			backgroundColor = color;
+			
+		}
+	
+		this.getBackgroundColor = function() {
+			return backgroundColor;
+		}
+		
+		this.draw();
+	}
 }

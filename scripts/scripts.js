@@ -176,6 +176,10 @@ function makeChart(data, labels, title, xAxis, yAxis) {
 	if(currentChartType == "#pie") {
 		return new Smpl.pieChart("#thechart", data, labels, title);
 	}
+	
+	if(currentChartType == "#unit") {
+		return new Smpl.unitChart("#thechart", data, labels, title);
+	}
 };
 
 function useOptions(chart) {
